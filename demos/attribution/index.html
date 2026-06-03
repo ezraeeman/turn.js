@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Prototyping the Future of Attribution</title>
+<style>
+:root{
+  --ink:#07112f;
+  --muted:#64708b;
+  --soft:#f7f8ff;
+  --panel:#ffffff;
+  --line:#dfe3f3;
+  --violet:#5a3ff2;
+  --violet-2:#7d6bff;
+  --blue:#0c55c7;
+  --green:#19a566;
+  --amber:#f5a349;
+  --shadow:0 24px 70px rgba(25,28,61,.12);
+  --radius:24px;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  min-height:100vh;
+  color:var(--ink);
+  background:
+    radial-gradient(circle at var(--x,15%) var(--y,8%), rgba(90,63,242,.20), transparent 25rem),
+    linear-gradient(135deg,#fbfcff 0%,#f4f6ff 48%,#ffffff 100%);
+}
+button{font:inherit;color:inherit}
+.site-shell{width:min(1500px,calc(100vw - 32px));margin:0 auto;padding:34px 0}
+.hero{display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:24px;align-items:start;margin-bottom:24px}
+.kicker{font-size:14px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:#4435da;margin:0 0 10px}
+h1{font-size:clamp(42px,5vw,72px);line-height:.95;letter-spacing:-.065em;margin:0;max-width:980px}
+.subtitle{font-size:clamp(17px,1.4vw,24px);color:#59637c;margin:18px 0 0;max-width:930px}
+.principle-card{background:linear-gradient(135deg,rgba(255,255,255,.95),rgba(245,246,255,.9));border:1px solid #cdd3ff;border-radius:16px;padding:18px 20px;display:grid;grid-template-columns:58px 1fr;gap:16px;box-shadow:var(--shadow)}
+.spark{width:54px;height:54px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,var(--violet),#3e31c8);color:#fff;font-size:27px}
+.principle-card strong{display:block;color:#4736e3;margin-bottom:6px}.principle-card p{margin:0;line-height:1.45}
+.interaction-bar{display:flex;gap:12px;flex-wrap:wrap;align-items:center;justify-content:space-between;margin:22px 0 18px;padding:12px;border:1px solid var(--line);border-radius:999px;background:rgba(255,255,255,.68);backdrop-filter:blur(18px);box-shadow:0 14px 40px rgba(28,32,70,.08)}
+.segmented{display:flex;gap:8px;flex-wrap:wrap}.pill{border:0;border-radius:999px;padding:12px 16px;background:transparent;color:#4b5570;cursor:pointer;font-weight:800;transition:.25s}.pill:hover,.pill.active{background:var(--ink);color:#fff;box-shadow:0 12px 24px rgba(7,17,47,.18)}
+.progress-wrap{display:flex;align-items:center;gap:12px;color:#4d5873;font-weight:800}.progress-track{width:min(310px,34vw);height:10px;border-radius:999px;background:#e9ecfb;overflow:hidden}.progress-fill{height:100%;width:0;background:linear-gradient(90deg,var(--violet),var(--blue));border-radius:999px;transition:width .35s}
+.story-grid{display:grid;grid-template-columns:360px minmax(0,1fr);gap:18px;align-items:stretch}.body-panel,.visual-panel,.takeaway,.notes{border:1px solid var(--line);background:rgba(255,255,255,.82);border-radius:var(--radius);box-shadow:var(--shadow)}
+.body-panel{padding:24px;display:flex;flex-direction:column;gap:18px}.body-panel h2{font-size:30px;letter-spacing:-.04em;margin:0}.body-panel p{color:#3f4964;line-height:1.65;margin:0}.needs{display:grid;gap:10px;margin:0;padding:0;list-style:none}.needs li{display:flex;gap:10px;align-items:center;padding:11px 12px;border-radius:14px;background:#f5f6ff;color:#26314d;font-weight:750}.check{width:21px;height:21px;border-radius:50%;display:grid;place-items:center;background:#eaf8f0;color:#16864f;font-size:13px;flex:0 0 auto}.visual-panel{padding:18px;overflow:hidden}.transition-stage{position:relative;min-height:390px;border-radius:20px;background:linear-gradient(135deg,#fff,#f2f4ff);border:1px solid #e5e8f7;padding:20px}.worlds{display:grid;grid-template-columns:1fr 80px 1fr;gap:12px;align-items:center;height:100%}.world{min-height:330px;border-radius:20px;padding:20px;border:1px solid #e0e4f4;background:#fff;position:relative;overflow:hidden}.world h3{margin:0 0 8px;font-size:28px;letter-spacing:-.04em}.world p{margin:0 0 18px;color:var(--muted)}.old .node{background:#f2f4f9;color:#4f5a72}.ai{background:linear-gradient(155deg,#fff,#f7f3ff)}.ai .node{background:#efeaff;color:#3a2fc5}.node{display:inline-flex;align-items:center;gap:8px;padding:10px 12px;margin:7px;border-radius:999px;font-weight:850;box-shadow:0 8px 24px rgba(32,37,72,.08)}.node::before{content:"";width:9px;height:9px;border-radius:50%;background:currentColor}.bridge{display:grid;place-items:center;color:#fff;background:linear-gradient(180deg,var(--violet),var(--blue));width:64px;height:168px;border-radius:999px;margin:auto;box-shadow:0 18px 40px rgba(74,60,219,.28)}.bridge span{font-size:34px;animation:pulse 1.6s infinite}.floating-card{position:absolute;right:28px;bottom:28px;width:min(430px,45%);background:#fff;border:1px solid #dde2f4;border-radius:18px;padding:16px;box-shadow:var(--shadow);transform:translateY(0);transition:.35s}.floating-card h4{margin:0 0 8px}.meter{height:10px;border-radius:999px;background:#edf0fb;overflow:hidden;margin:12px 0}.meter span{display:block;height:100%;width:89%;background:linear-gradient(90deg,#194db6,#6f55ff)}
+.card-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:18px}.feature-card{border:1px solid var(--line);border-radius:18px;background:#fff;padding:16px;text-align:left;cursor:pointer;min-height:160px;transition:.25s;position:relative;overflow:hidden}.feature-card:hover,.feature-card.active{transform:translateY(-4px);border-color:#b9bfff;box-shadow:0 16px 35px rgba(45,49,96,.14)}.feature-card.active::after{content:"";position:absolute;inset:auto 16px 0;height:4px;border-radius:999px;background:linear-gradient(90deg,var(--violet),var(--blue))}.num{display:inline-grid;place-items:center;width:32px;height:32px;border-radius:50%;background:var(--ink);color:#fff;font-weight:900;margin-bottom:12px}.feature-card h3{font-size:17px;margin:0 0 7px}.feature-card p{color:#68728d;font-size:13px;line-height:1.45;margin:0}.detail-drawer{display:grid;grid-template-columns:1fr 1.1fr;gap:16px;margin-top:18px}.takeaway,.notes{padding:22px}.takeaway{background:linear-gradient(135deg,#07112f,#251a92);color:#fff}.takeaway span{display:block;color:#c7c9ff;text-transform:uppercase;letter-spacing:.16em;font-weight:900;font-size:12px;margin-bottom:10px}.takeaway p{font-size:24px;line-height:1.28;font-weight:850;margin:0}.notes h3{margin:0 0 12px}.notes ul{margin:0;padding-left:20px;color:#44506b;line-height:1.65}.footer-contract{margin-top:18px;border-radius:18px;background:rgba(255,255,255,.82);border:1px solid var(--line);display:flex;gap:22px;align-items:center;justify-content:space-between;padding:20px 24px;box-shadow:0 14px 42px rgba(32,36,76,.08)}.contract-left{display:flex;align-items:center;gap:16px;font-weight:900}.people{width:52px;height:52px;border-radius:50%;display:grid;place-items:center;background:#ecebff;font-size:25px}.values{display:flex;gap:28px;flex-wrap:wrap;color:#1d2946;font-weight:800}.values span{display:flex;gap:8px;align-items:center}.values i{font-style:normal;color:#3024bd}.hidden{display:none}@keyframes pulse{0%,100%{transform:translateX(0)}50%{transform:translateX(5px)}}
+@media (max-width:1050px){.hero,.story-grid,.detail-drawer{grid-template-columns:1fr}.card-grid{grid-template-columns:repeat(2,1fr)}.floating-card{position:relative;right:auto;bottom:auto;width:auto;margin-top:16px}.worlds{grid-template-columns:1fr}.bridge{width:100%;height:58px}.footer-contract{align-items:flex-start;flex-direction:column}.progress-track{width:180px}}
+@media (max-width:620px){.site-shell{width:min(100% - 20px,1500px);padding:18px 0}.card-grid{grid-template-columns:1fr}.interaction-bar{border-radius:22px}.world{min-height:auto}.pill{padding:10px 12px}.progress-wrap{width:100%;justify-content:space-between}.progress-track{flex:1}.hero{gap:14px}.principle-card{grid-template-columns:1fr}.takeaway p{font-size:20px}}
+</style>
+</head>
+<body>
+<main class="site-shell">
+  <section class="hero" aria-labelledby="page-title">
+    <div>
+      <p class="kicker">The future of attribution</p>
+      <h1 id="page-title">Richer Attribution in AI Experiences</h1>
+      <p class="subtitle">From invisible links to persistent relationships, trust and value exchange.</p>
+    </div>
+    <aside class="principle-card" aria-label="Principle">
+      <div class="spark" aria-hidden="true">✦</div>
+      <div><strong>Principle</strong><p>Make publishers visible, trusted and rewarded across the entire user journey.</p></div>
+    </aside>
+  </section>
+
+  <nav class="interaction-bar" aria-label="Interactive sections">
+    <div class="segmented" role="tablist" aria-label="Story mode">
+      <button class="pill active" data-mode="shift" role="tab" aria-selected="true">Old web → AI web</button>
+      <button class="pill" data-mode="publishers" role="tab" aria-selected="false">Publisher needs</button>
+      <button class="pill" data-mode="prototype" role="tab" aria-selected="false">Prototype futures</button>
+    </div>
+    <div class="progress-wrap"><span id="progress-label">1 / 8</span><div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div></div>
+  </nav>
+
+  <section class="story-grid">
+    <article class="body-panel">
+      <h2>Prototyping the Future of Attribution</h2>
+      <p>Most current discussions about AI and publishers remain trapped in a binary debate between extraction and blocking.</p>
+      <p>But AI-native interfaces create the possibility for entirely new forms of attribution and value exchange. If assistants and agents become the dominant interface to information, publishers need more than citations at the bottom of generated answers.</p>
+      <ul class="needs" aria-label="Publisher needs">
+        <li><span class="check">✓</span>persistent identity</li>
+        <li><span class="check">✓</span>transparent provenance</li>
+        <li><span class="check">✓</span>measurable contribution</li>
+        <li><span class="check">✓</span>conversational presence</li>
+        <li><span class="check">✓</span>participation in the economic layer of the AI web</li>
+      </ul>
+      <p>This is why publishers should actively prototype possible futures with companies like Microsoft, Google and OpenAI — not simply to defend traffic, but to redesign how trust, visibility and value work in AI-mediated environments.</p>
+    </article>
+
+    <section class="visual-panel" aria-label="Interactive attribution prototype">
+      <div class="transition-stage" id="stage">
+        <div class="worlds" data-panel="shift">
+          <div class="world old"><h3>Old web</h3><p>Visibility optimized for referrals and ranking.</p><span class="node">Links</span><span class="node">Clicks</span><span class="node">SEO</span><span class="node">Traffic funnels</span></div>
+          <div class="bridge" aria-hidden="true"><span>→</span></div>
+          <div class="world ai"><h3>AI web</h3><p>Visibility becomes a living relationship layer.</p><span class="node">Grounding</span><span class="node">Identity</span><span class="node">Trust</span><span class="node">Memory</span><span class="node">Participation</span></div>
+        </div>
+        <div class="worlds hidden" data-panel="publishers">
+          <div class="world ai"><h3>Publisher layer</h3><p>Sources stay present while an answer evolves.</p><span class="node">Source cards</span><span class="node">Agent lens</span><span class="node">Preference memory</span></div>
+          <div class="bridge" aria-hidden="true"><span>↔</span></div>
+          <div class="world old"><h3>Audience layer</h3><p>Readers choose trusted voices inside the conversation.</p><span class="node">Follow coverage</span><span class="node">Ask follow-up</span><span class="node">Subscribe</span></div>
+        </div>
+        <div class="worlds hidden" data-panel="prototype">
+          <div class="world old"><h3>Partners</h3><p>Microsoft Web IQ, Google and OpenAI turn search infrastructure into grounding infrastructure.</p><span class="node">Retrieve</span><span class="node">Synthesize</span><span class="node">Route value</span></div>
+          <div class="bridge" aria-hidden="true"><span>↗</span></div>
+          <div class="world ai"><h3>Possible futures</h3><p>Publishers test new surfaces before the norms are locked in.</p><span class="node">Economic signals</span><span class="node">Liquid presence</span><span class="node">Trust contracts</span></div>
+        </div>
+        <aside class="floating-card" id="feature-detail" aria-live="polite"></aside>
+      </div>
+      <div class="card-grid" id="feature-grid"></div>
+    </section>
+  </section>
+
+  <section class="detail-drawer">
+    <div class="takeaway"><span>Bottom takeaway</span><p>The future of attribution is not a link. It is an intelligent relationship layer between publishers, AI systems and audiences.</p></div>
+    <aside class="notes"><h3>Speaker notes</h3><ul><li>Search infrastructure is becoming grounding infrastructure.</li><li>AI systems increasingly retrieve and synthesize information instead of sending traffic.</li><li>The strategic question: how do publishers remain visible, valuable and economically sustainable inside those systems?</li></ul></aside>
+  </section>
+
+  <footer class="footer-contract">
+    <div class="contract-left"><span class="people">👥</span><span>A new social contract for the AI web</span></div>
+    <div class="values"><span><i>◈</i>Trust</span><span><i>◉</i>Transparency</span><span><i>$</i>Value Exchange</span><span><i>♡</i>Choice</span></div>
+  </footer>
+</main>
+<script>
+const features=[
+  ['Persistent Publisher Identity','Publishers remain visible throughout the answer','A trusted source badge, publisher profile and follow action can travel with the response instead of disappearing into a footnote.'],
+  ['Conversational Source Cards','Expandable, interactive and transparent','Source cards expose why a publisher was used, what they contributed and which follow-up actions are available.'],
+  ['Attribution Memory','AI remembers trusted publishers','User preferences and publisher relationships can shape future briefings, recommendations and agent behavior.'],
+  ['Embedded Publisher Agents','Publisher expertise enters the conversation','A publisher lens can answer follow-ups, explain context and maintain editorial presence in AI-native interfaces.'],
+  ['Agentic Subscription Surfaces','Access intelligence layers, not just articles','Subscriptions can unlock archives, explainers, personalized briefings and topic memory across chats.'],
+  ['Provenance Visualization','See how an answer is grounded','Confidence, source mix and evidence details make attribution legible and interactive.'],
+  ['Value & Revenue Signals','New metrics that reflect real contribution','Grounding usage, trust interactions, subscription conversion and conversation persistence become measurable signals.'],
+  ['Liquid Publisher Presence','One publisher, everywhere','A consistent publisher identity can appear across assistants, mobile apps, voice, glasses and enterprise copilots.']
+];
+const grid=document.getElementById('feature-grid'),detail=document.getElementById('feature-detail'),progress=document.getElementById('progress-fill'),progressLabel=document.getElementById('progress-label');
+function renderCards(){features.forEach((f,i)=>{const b=document.createElement('button');b.className='feature-card';b.type='button';b.innerHTML=`<span class="num">${i+1}</span><h3>${f[0]}</h3><p>${f[1]}</p>`;b.addEventListener('click',()=>selectFeature(i));grid.appendChild(b)})}
+function selectFeature(i){document.querySelectorAll('.feature-card').forEach((c,idx)=>c.classList.toggle('active',idx===i));detail.innerHTML=`<h4>${features[i][0]}</h4><p>${features[i][2]}</p><div class="meter"><span style="width:${55+i*5}%"></span></div><small>${features[i][1]}</small>`;progress.style.width=`${((i+1)/features.length)*100}%`;progressLabel.textContent=`${i+1} / ${features.length}`}
+document.querySelectorAll('.pill').forEach(btn=>btn.addEventListener('click',()=>{document.querySelectorAll('.pill').forEach(b=>{b.classList.remove('active');b.setAttribute('aria-selected','false')});btn.classList.add('active');btn.setAttribute('aria-selected','true');document.querySelectorAll('[data-panel]').forEach(p=>p.classList.toggle('hidden',p.dataset.panel!==btn.dataset.mode))}));
+document.addEventListener('pointermove',e=>{document.body.style.setProperty('--x',`${e.clientX}px`);document.body.style.setProperty('--y',`${e.clientY}px`)});
+renderCards();selectFeature(0);
+</script>
+</body>
+</html>
