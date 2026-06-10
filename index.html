@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Richer Attribution in AI Experiences</title>
+  <meta name="description" content="An interactive strategic exploration of richer attribution models for AI-native information experiences." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:opsz,wght@6..72,500;6..72,700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink: #08112f;
+      --muted: #5c6684;
+      --soft: #eef1f8;
+      --panel: rgba(255,255,255,.84);
+      --line: #dbe0ee;
+      --blue: #2457d6;
+      --purple: #6651e7;
+      --violet: #8d7cff;
+      --green: #0f9f6e;
+      --red: #d92323;
+      --shadow: 0 20px 60px rgba(8,17,47,.10), 0 2px 10px rgba(8,17,47,.05);
+      --small-shadow: 0 12px 30px rgba(8,17,47,.08);
+      color-scheme: light;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 78% 0%, rgba(102,81,231,.12), transparent 32rem),
+        radial-gradient(circle at 12% 8%, rgba(36,87,214,.10), transparent 28rem),
+        linear-gradient(180deg, #fff 0%, #f8f9fd 46%, #fff 100%);
+      min-height: 100vh;
+    }
+
+    button, input { font: inherit; }
+    button { cursor: pointer; }
+    a { color: inherit; }
+    .app-shell { max-width: 1540px; margin: 0 auto; padding: 34px clamp(18px, 3vw, 48px) 54px; }
+    .topbar { display:flex; align-items:center; justify-content:space-between; gap:20px; margin-bottom:32px; position:sticky; top:0; z-index:30; padding:10px 0; backdrop-filter: blur(18px); }
+    .brand { display:flex; align-items:center; gap:12px; font-weight:800; letter-spacing:-.03em; }
+    .brand-mark { width:38px; height:38px; display:grid; place-items:center; border-radius:14px; color:#fff; background:linear-gradient(135deg,var(--blue),var(--purple)); box-shadow:0 10px 28px rgba(82,68,220,.26); }
+    .nav-actions { display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end; }
+    .pill-button { border:1px solid var(--line); background:rgba(255,255,255,.78); color:var(--ink); border-radius:999px; padding:10px 14px; font-weight:700; box-shadow:0 1px 0 #fff inset; transition:.2s ease; }
+    .pill-button:hover, .pill-button.active { border-color:#b9c4ee; background:#f1f4ff; color:#193fbd; transform:translateY(-1px); }
+    .primary-button { border:0; color:#fff; background:linear-gradient(135deg,var(--blue),var(--purple)); border-radius:999px; padding:11px 16px; font-weight:800; box-shadow:0 12px 28px rgba(61,72,214,.22); }
+    .eyebrow { color:#3648e6; font-weight:900; letter-spacing:.12em; text-transform:uppercase; font-size:14px; margin:0 0 8px; }
+    .hero { display:grid; grid-template-columns:minmax(0,1fr) 380px; gap:32px; align-items:start; margin-bottom:26px; }
+    h1 { font-size:clamp(44px, 6vw, 88px); line-height:.93; margin:0; letter-spacing:-.075em; max-width:1000px; }
+    h2 { font-size:clamp(31px, 4vw, 58px); line-height:1; margin:0; letter-spacing:-.055em; }
+    h3 { margin:0; font-size:20px; letter-spacing:-.025em; }
+    p { color:var(--muted); line-height:1.55; }
+    .subtitle { font-size:clamp(18px,2vw,25px); margin:14px 0 0; max-width:930px; }
+    .principle { border:1px solid #cdd4fb; border-radius:18px; background:linear-gradient(135deg, rgba(255,255,255,.9), rgba(246,247,255,.9)); padding:20px; box-shadow:var(--small-shadow); display:flex; gap:16px; align-items:flex-start; }
+    .principle-icon { min-width:54px; height:54px; border-radius:50%; background:linear-gradient(135deg,var(--blue),var(--purple)); color:#fff; display:grid; place-items:center; font-size:26px; }
+    .principle b { color:#4d3bed; display:block; margin-bottom:7px; }
+    .section-head { display:flex; justify-content:space-between; gap:20px; align-items:end; margin:42px 0 18px; }
+    .section-head p { margin:8px 0 0; max-width:760px; }
+    .concept-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:14px; }
+    .concept-card { border:1px solid var(--line); background:var(--panel); border-radius:18px; padding:14px; box-shadow:0 1px 0 #fff inset; min-height:330px; display:flex; flex-direction:column; gap:14px; transition:transform .22s ease, box-shadow .22s ease, border-color .22s ease; text-align:left; color:inherit; }
+    .concept-card:hover { transform:translateY(-5px); box-shadow:var(--shadow); border-color:#bfc8f6; }
+    .card-title-row { display:grid; grid-template-columns:36px 1fr; gap:12px; align-items:start; }
+    .number { width:30px; height:30px; background:var(--ink); color:#fff; display:grid; place-items:center; border-radius:50%; font-weight:900; }
+    .card-title-row p { margin:4px 0 0; font-size:14px; }
+    .mockup { border:1px solid var(--line); background:#fff; border-radius:16px; box-shadow:var(--small-shadow); overflow:hidden; position:relative; }
+    .mini-mock { flex:1; min-height:220px; padding:14px; }
+    .chat-bubble { display:inline-block; max-width:78%; background:#f0f1fb; border-radius:16px 16px 16px 5px; padding:11px 14px; color:#111936; font-weight:650; font-size:13px; }
+    .answer { margin-top:18px; font-size:13px; line-height:1.5; color:#1a2342; }
+    .source-rail { position:absolute; right:12px; top:54px; width:135px; border:1px solid var(--line); border-radius:12px; background:#fff; padding:10px; box-shadow:0 12px 30px rgba(8,17,47,.08); }
+    .logo-row { display:flex; align-items:center; gap:7px; margin:8px 0; font-size:11px; color:#1c2747; font-weight:700; }
+    .logo { width:24px; height:24px; border-radius:6px; object-fit:contain; background:#fff3e7; border:1px solid #eadbca; padding:2px; }
+    .logo.round { border-radius:50%; }
+    .tiny-actions { display:flex; gap:8px; flex-wrap:wrap; margin-top:18px; }
+    .tiny-actions span, .chip { display:inline-flex; align-items:center; gap:6px; border:1px solid var(--line); border-radius:999px; padding:7px 10px; font-size:12px; font-weight:750; background:#fff; color:#1c2747; }
+    .chip.blue { background:#123fb9; color:#fff; border-color:#123fb9; }
+    .chip.green { color:#04764f; background:#ecfff7; border-color:#b7edd8; }
+    .source-card { border:1px solid var(--line); border-radius:14px; padding:14px; margin-top:10px; box-shadow:0 12px 28px rgba(8,17,47,.08); }
+    .metric-bars { display:grid; gap:12px; margin-top:14px; }
+    .bar { display:grid; grid-template-columns:120px 1fr 30px; gap:9px; align-items:center; font-size:12px; color:#26304d; }
+    .bar-track { height:14px; border-radius:999px; background:#eef0f7; overflow:hidden; }
+    .bar-fill { height:100%; border-radius:999px; background:linear-gradient(90deg,var(--blue),var(--purple)); }
+    .radar { width:170px; height:170px; border-radius:50%; margin:18px auto 8px; display:grid; place-items:center; background:repeating-radial-gradient(circle, #fff 0 24px, #eef1f8 25px 26px), conic-gradient(from -40deg, rgba(102,81,231,.18), rgba(36,87,214,.05), rgba(102,81,231,.18)); border:1px solid var(--line); position:relative; }
+    .radar img { width:78px; height:78px; border-radius:50%; padding:8px; background:#ffd6aa; object-fit:contain; box-shadow:0 8px 20px rgba(0,0,0,.1); }
+    .surface-labels { display:grid; grid-template-columns:1fr 1fr; gap:8px; font-size:12px; color:var(--muted); text-align:center; }
+    .detail-layout { display:grid; grid-template-columns:minmax(0,1.5fr) minmax(320px,.75fr); gap:22px; align-items:start; }
+    .back-link { margin-bottom:18px; }
+    .detail-hero { min-height:520px; padding:24px; background:linear-gradient(180deg,#fff,#fbfcff); }
+    .ai-window { border:1px solid var(--line); border-radius:24px; overflow:hidden; background:#fff; box-shadow:var(--shadow); min-height:470px; position:relative; }
+    .window-top { height:56px; display:flex; align-items:center; justify-content:space-between; padding:0 20px; border-bottom:1px solid var(--line); background:#fbfcff; }
+    .dots { display:flex; gap:7px; }.dots i { width:10px; height:10px; border-radius:50%; background:#d4d9e7; display:block; }
+    .window-body { padding:24px; }
+    .large-response { max-width:650px; color:#19213d; line-height:1.65; }
+    .annotation { position:absolute; border:0; border-radius:999px; background:linear-gradient(135deg,var(--blue),var(--purple)); color:#fff; width:30px; height:30px; display:grid; place-items:center; font-weight:900; box-shadow:0 0 0 8px rgba(102,81,231,.12), 0 10px 24px rgba(56,67,210,.25); z-index:4; }
+    .annotation:hover, .annotation.active { transform:scale(1.08); }
+    .tooltip { position:absolute; z-index:8; width:min(340px, calc(100vw - 64px)); background:#fff; border:1px solid #cbd3f5; border-radius:18px; padding:16px; box-shadow:var(--shadow); }
+    .tooltip strong { display:block; margin-bottom:7px; }.tooltip p { margin:0 0 10px; font-size:13px; }.tooltip dl { display:grid; gap:7px; margin:0; }.tooltip dt { font-size:11px; color:#4f3ee4; font-weight:900; text-transform:uppercase; letter-spacing:.08em; }.tooltip dd { margin:0; color:#293352; font-size:13px; line-height:1.45; }
+    .side-panel { position:sticky; top:82px; border:1px solid var(--line); border-radius:22px; background:rgba(255,255,255,.86); backdrop-filter:blur(18px); box-shadow:var(--small-shadow); padding:20px; }
+    .panel-block { border-top:1px solid var(--line); padding-top:15px; margin-top:15px; }
+    .panel-block h4 { margin:0 0 7px; font-size:13px; letter-spacing:.08em; text-transform:uppercase; color:#3f49d7; }.panel-block p, .panel-block li { font-size:14px; color:#4d5876; line-height:1.55; }.panel-block ul { margin:8px 0 0; padding-left:19px; }
+    .stakeholders { display:flex; flex-wrap:wrap; gap:8px; }.stakeholders span { border:1px solid var(--line); border-radius:999px; padding:7px 9px; background:#fff; color:#1d2748; font-weight:700; font-size:12px; }
+    .scenario { font-family:Newsreader, Georgia, serif; font-size:20px !important; color:#17203d !important; line-height:1.45 !important; }
+    .compare-panel, .spectrum, .reflection { border:1px solid var(--line); background:rgba(255,255,255,.82); box-shadow:var(--small-shadow); border-radius:24px; padding:22px; }
+    .compare-picker { display:flex; flex-wrap:wrap; gap:8px; margin:18px 0; }.compare-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:14px; }.compare-card { background:#fff; border:1px solid var(--line); border-radius:18px; padding:16px; }.score-row { display:grid; grid-template-columns:1fr 86px; gap:10px; align-items:center; margin:12px 0; font-size:13px; color:#313b59; }.score { height:8px; border-radius:999px; background:#eef0f7; overflow:hidden; }.score i { display:block; height:100%; background:linear-gradient(90deg,var(--blue),var(--purple)); border-radius:999px; }
+    .spectrum-track { display:grid; grid-template-columns:repeat(6,1fr); gap:8px; margin-top:18px; }.stage { min-height:128px; border:1px solid var(--line); background:#fff; border-radius:18px; padding:14px; position:relative; overflow:hidden; }.stage:before { content:""; position:absolute; inset:auto 0 0; height:5px; background:linear-gradient(90deg,var(--blue),var(--purple)); opacity:calc(.22 + var(--i) * .11); }.stage b { display:block; margin-bottom:9px; font-size:14px; }.stage p { margin:0; font-size:12px; }
+    .questions { display:grid; grid-template-columns:repeat(5,1fr); gap:12px; margin-top:18px; }.question-card { border:1px solid var(--line); background:#fff; border-radius:18px; padding:16px; font-family:Newsreader, Georgia, serif; font-size:20px; line-height:1.25; }
+    .page-enter { animation: pageIn .34s ease both; }
+    @keyframes pageIn { from { opacity:0; transform:translateY(14px); } to { opacity:1; transform:none; } }
+    #tip { left: min(58%, calc(100% - 360px)); top: 64%; }
+    .footer-strip { margin-top:26px; border:1px solid var(--line); border-radius:20px; background:linear-gradient(90deg,#f6f4ff,#fff); padding:18px 24px; display:flex; align-items:center; justify-content:space-between; gap:18px; color:#4d5876; }.footer-strip b { color:var(--ink); }
+    @media (max-width:1180px) { .concept-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } .hero, .detail-layout { grid-template-columns:1fr; } .side-panel { position:static; } .compare-grid, .questions { grid-template-columns:repeat(2,1fr); } .spectrum-track { grid-template-columns:repeat(3,1fr); } }
+    @media (max-width:700px) { .app-shell { padding:20px 14px 38px; } .topbar { align-items:flex-start; flex-direction:column; } .concept-grid, .compare-grid, .questions, .spectrum-track { grid-template-columns:1fr; } .hero { gap:18px; } .source-rail { position:static; width:auto; margin-top:12px; } .detail-hero { padding:12px; } .window-body { padding:16px; } .footer-strip { flex-direction:column; align-items:flex-start; } }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+  <script>
+    const logo = (domain) => `https://logo.clearbit.com/${domain}`;
+    const concepts = [
+      ['Persistent Publisher Identity','Publishers remain visible throughout the answer','ft.com','Generative answers often detach information from the institutions that reported, verified or contextualized it.','Trusted news brands can become persistent companions in AI sessions, with follow, subscribe and perspective controls embedded in the flow.'],
+      ['Conversational Source Cards','Expandable, interactive and transparent','reuters.com','Simple citations are too brittle for conversational interfaces: users need to inspect evidence without breaking the flow.','Source cards can reveal reporting type, confidence, coverage, recency and follow-up prompts inside the answer.'],
+      ['Attribution Memory','AI remembers trusted publishers','nikkei.com','Every session starts from zero, even when users repeatedly rely on specific institutions and beats.','Assistants can remember preferred sources, brief users through trusted lenses and let people tune their trust profiles.'],
+      ['Embedded Publisher Agents','Publisher expertise enters the conversation','politico.eu','AI platforms can summarize publisher work, but they rarely let the publisher’s own expertise participate in the dialogue.','Specialist publisher agents can be invited into conversations as accountable expert lenses.'],
+      ['Agentic Subscription Layers','Access intelligence layers, not just articles','economist.com','Article paywalls do not map neatly to assistants that synthesize, remember and act.','Subscriptions can unlock archive-aware explainers, topic memory, analyst perspectives and premium synthesis.'],
+      ['Provenance Visualization','See how an answer is grounded','apnews.com','AI answers can sound authoritative even when their evidence base is thin, stale or synthetic.','Visual provenance can show source contribution, confidence, reasoning lineage and evidence gaps.'],
+      ['Value & Revenue Signals','New metrics that reflect real contribution','bloomberg.com','Clicks are a weak proxy for value when users get answers without visiting publisher pages.','Influence metrics can measure grounding usage, trust interactions, follows, conversions and persistence.'],
+      ['Liquid Publisher Presence','One publisher, everywhere','ft.com','Attribution conventions are fragmented across chat, voice, wearables, TV and enterprise tools.','Publisher identity can travel across AI surfaces with consistent trust, permissions and value exchange.']
+    ].map((c,i)=>({id:i+1,title:c[0],short:c[1],domain:c[2],problem:c[3],opportunity:c[4]}));
+    const scenarios = [
+      'A policy analyst asks about European inflation. The answer evolves over several turns, but the Financial Times, Reuters and The Economist remain visible as living contributors.',
+      'A commuter expands a Reuters card inside a voice-first assistant. The card reads itself aloud, compares sources and offers to open the original investigation later.',
+      'A founder opens her morning briefing. Her assistant knows she trusts Nikkei Asia for supply chains, FT for macroeconomics and local outlets for regulation.',
+      'A public affairs team invites Politico Europe and FT Legal Analysis into a chat about a new AI rule. Each agent explains its lens and flags uncertainty.',
+      'A student subscribes to an Economist intelligence layer for climate policy and receives archive-grounded explainers, saved topic memory and concise debates.',
+      'A doctor opens the provenance map for a health policy summary and sees AP reporting, government data, Reuters interviews and model inference separated.',
+      'A newsroom business lead sees an investigation influenced enterprise copilots, generated follow actions and converted subscribers despite modest direct traffic.',
+      'A commuter hears an FT-sourced market update in earbuds, continues in a car display and later opens the evidence map in an enterprise copilot.'
+    ];
+    const questionSets = [
+      ['When does persistent presence become clutter?','Who decides which publishers are eligible?','How are conflicts between sources surfaced?'],
+      ['What metadata should every card include?','How should original reporting be distinguished?','Can cards be interoperable?'],
+      ['How portable should trust profiles be?','Can users reset source weighting?','How do we prevent filter bubbles?'],
+      ['How are publisher agents authenticated?','Who is liable for outputs?','What happens when agents disagree?'],
+      ['How are bundles priced?','Can users understand paid versus open?','How do publishers avoid invisibility?'],
+      ['Which reasoning should be visible?','How do we show uncertainty clearly?','Can provenance be audited?'],
+      ['Which signals should trigger payment?','How do we prevent metric gaming?','Should influence be independently measured?'],
+      ['What is the canonical identity layer?','How much attribution fits in voice?','Who enforces consistency?']
+    ];
+    const hotcopy = ['Explanation','Why it matters','Benefit','Risk'];
+    const scores = { value:[72,68,64,78,84,86,90,76], ease:[58,72,50,42,38,36,48,34], regulation:[42,44,70,58,76,82,88,84], publisher:[76,70,78,82,92,84,95,88] };
+    let view = 'home', activeConcept = null, selected = [1,2,7];
+    const root = document.getElementById('root');
+    const img = d => `<img class="logo" src="${logo(d)}" onerror="this.style.display='none'" alt="${d} logo">`;
+    const nav = () => `<div class="topbar"><button class="brand pill-button" data-view="home"><span class="brand-mark">✦</span><span>Attribution Futures</span></button><div class="nav-actions"><button class="pill-button ${view==='home'?'active':''}" data-view="home">Concepts</button><button class="pill-button ${view==='compare'?'active':''}" data-view="compare">Compare Concepts</button><button class="pill-button ${view==='spectrum'?'active':''}" data-view="spectrum">Attribution Spectrum</button><button class="primary-button" data-scroll="reflection">Discussion Questions</button></div></div>`;
+    const hero = (eyebrow,title,sub,principle=true) => `<section class="hero" ${principle?'':'style="grid-template-columns:1fr"'}><div><p class="eyebrow">${eyebrow}</p><h1>${title}</h1><p class="subtitle">${sub}</p></div>${principle?'<aside class="principle"><span class="principle-icon">✦</span><div><b>Principle</b><span>Make publishers visible, trusted and rewarded across the entire user journey.</span></div></aside>':''}</section>`;
+    function mini(c){
+      if(c.id===2) return `<div class="mockup mini-mock"><div class="tiny-actions"><span>Sources used <b>3</b></span><span>Most relevant⌄</span></div><div class="source-card"><div class="logo-row">${img('reuters.com')} Reuters <span style="margin-left:auto">2h ago</span></div><h3 style="font-size:16px">EU energy prices fall as supply improves</h3><p style="font-size:12px">Confidence <b style="color:#087b54">High</b> · Coverage Europe</p></div><div class="logo-row">${img('bloomberg.com')} Bloomberg</div><div class="logo-row">${img('ft.com')} Financial Times</div></div>`;
+      if(c.id===3) return `<div class="mockup mini-mock"><h3 style="font-size:16px">Your news preferences</h3><p style="font-size:13px">You frequently rely on FT and Nikkei for economic coverage.</p><div class="tiny-actions"><span>${img('ft.com')} Financial Times ★</span><span>${img('nikkei.com')} Nikkei Asia ★</span></div><div class="source-card"><b>Personalized briefing</b><p style="font-size:12px">Asia markets synthesized from trusted sources.</p><span class="chip blue">View briefing ↗</span></div></div>`;
+      if(c.id===4) return `<div class="mockup mini-mock"><div class="chat-bubble" style="float:right">Explain the new EU AI regulation.</div><div style="clear:both;padding-top:60px"><p style="font-size:13px">Which expert lens would you like?</p><div class="tiny-actions"><span>Politico Europe</span><span>FT Legal Analysis</span></div><div class="source-card" style="background:#f5f1ff"><div class="logo-row">${img('politico.eu')} Politico Europe agent <span class="chip green" style="margin-left:auto">Live</span></div><p style="font-size:12px">The EU AI Act introduces risk-based rules...</p></div></div></div>`;
+      if(c.id===5) return `<div class="mockup mini-mock"><div class="logo-row">${img('economist.com')}<h3 style="font-size:17px">The Economist Intelligence Layer</h3></div><p style="font-size:13px">✓ Deeper analysis & explainers<br>✓ Archive access since 1945<br>✓ Personalized briefings<br>✓ Topic memory across chats</p><div class="tiny-actions"><span>Free preview</span><span class="chip" style="background:#d90000;color:#fff">Unlock full access</span></div></div>`;
+      if(c.id===6) return `<div class="mockup mini-mock"><h3 style="font-size:16px">How this answer is grounded</h3><div style="display:flex;align-items:center;gap:18px"><div class="radar" style="width:118px;height:118px"><b>89%</b></div><div class="metric-bars" style="flex:1">${['AP Reporting','Gov data','Reuters'].map((m,i)=>bar(m,[42,31,18][i])).join('')}</div></div><span class="chip">See evidence details⌄</span></div>`;
+      if(c.id===7) return `<div class="mockup mini-mock"><h3 style="font-size:16px">Value signals from AI interactions</h3><div class="metric-bars">${['Grounding usage','Trust interactions','Subscription conversions','Followed sources','Persistence score'].map((m,i)=>bar(m,[95,82,78,74,69][i])).join('')}</div></div>`;
+      if(c.id===8) return `<div class="mockup mini-mock"><div class="radar"><img src="${logo('ft.com')}" onerror="this.style.display='none'" alt="FT logo"></div><div class="surface-labels"><span>Chat & Assistants</span><span>Voice & Audio</span><span>Mobile & Apps</span><span>Smart TV</span><span>AR / Glasses</span><span>Enterprise Copilots</span></div></div>`;
+      return `<div class="mockup mini-mock"><span class="chat-bubble">What’s driving inflation in Europe?</span><p class="answer">Inflation is being driven by energy costs, wage growth and supply chain constraints...</p><div class="source-rail"><b style="font-size:12px">Trusted sources</b><div class="logo-row">${img('ft.com')} Financial Times</div><div class="logo-row">${img('reuters.com')} Reuters</div><div class="logo-row">${img('economist.com')} Economist</div></div><div class="tiny-actions"><span>Follow coverage</span><span>Ask FT</span><span class="chip blue">Subscribe</span></div></div>`;
+    }
+    function bar(m,v){ return `<div class="bar"><span>${m}</span><div class="bar-track"><div class="bar-fill" style="width:${v}%"></div></div><b>${v}</b></div>`; }
+    function home(){ return hero('The future of attribution','Richer Attribution in AI Experiences','From invisible links to persistent relationships, trust and value exchange.') + `<div class="section-head"><div><h2>Eight possible directions</h2><p>This is a living strategy report from the future — not a product demo. Click any concept to inspect how attribution could evolve inside chatbots, assistants, agents and conversational search.</p></div></div><section class="concept-grid">${concepts.map(c=>`<button class="concept-card" data-detail="${c.id}"><div class="card-title-row"><span class="number">${c.id}</span><div><h3>${c.title}</h3><p>${c.short}</p></div></div>${mini(c)}</button>`).join('')}</section>`; }
+    function detail(id){ const c=concepts[id-1], qs=questionSets[id-1]; return `<button class="pill-button back-link" data-view="home">← Back to concepts</button>${hero('Concept '+c.id,c.title,c.short+'. Explore the highlighted annotations to test the strategic logic, benefits and risks.',false)}<div class="detail-layout"><div class="mockup detail-hero"><div class="ai-window"><div class="window-top"><div class="dots"><i></i><i></i><i></i></div><b>AI briefing workspace</b><span class="chip">2030 prototype</span></div><div class="window-body">${mini(c)}<p class="large-response">This future interface treats attribution as a design system: visible identity, inspectable evidence, explicit user choice and measurable value exchange. The goal is not to add more links, but to make trusted contribution legible wherever the AI experience unfolds.</p></div>${[1,2,3].map((n,i)=>`<button class="annotation" data-tip="${i}" style="left:${[35,60,76][i]}%;top:${[30,55,74][i]}%">${n}</button>`).join('')}<div class="tooltip" id="tip"><strong>${hotcopy[0]}</strong><p>Hover or tap a numbered annotation to inspect a product detail.</p><dl><dt>Why it matters</dt><dd>${hotcopy[1]}: it makes source contribution visible in context.</dd><dt>Risk</dt><dd>${hotcopy[3]}: standards and governance are still unresolved.</dd></dl></div></div></div><aside class="side-panel"><h3>Strategic thinking</h3>${panel('Problem Today',c.problem)}${panel('Opportunity',c.opportunity)}<div class="panel-block"><h4>Questions</h4><ul>${qs.map(q=>`<li>${q}</li>`).join('')}</ul></div><div class="panel-block"><h4>Stakeholders</h4><div class="stakeholders"><span>users</span><span>publishers</span><span>AI companies</span><span>regulators</span></div></div><div class="panel-block"><h4>Future Scenario</h4><p class="scenario">Imagine it is 2030. ${scenarios[id-1]}</p></div></aside></div>`; }
+    function panel(t,x){ return `<div class="panel-block"><h4>${t}</h4><p>${x}</p></div>`; }
+    function compare(){ return hero('Compare concepts mode','Compare strategic trade-offs','Select up to three concepts and compare value creation, implementation ease, regulatory dependency and publisher benefit.',false)+`<div class="compare-panel"><div class="compare-picker">${concepts.map(c=>`<button class="pill-button ${selected.includes(c.id)?'active':''}" data-select="${c.id}">${c.id}. ${c.title}</button>`).join('')}</div><div class="compare-grid">${concepts.filter(c=>selected.includes(c.id)).map(c=>`<div class="compare-card"><div class="logo-row">${img(c.domain)}<h3>${c.title}</h3></div><p>${c.problem}</p>${[['Value created','value'],['Easiest to implement','ease'],['Requires regulation','regulation'],['Benefits publishers','publisher']].map(([l,k])=>`<div class="score-row"><span>${l}</span><div class="score"><i style="width:${scores[k][c.id-1]}%"></i></div></div>`).join('')}</div>`).join('')}</div></div>`; }
+    function spectrum(){ const names=['Invisible Attribution','Linked Attribution','Interactive Attribution','Persistent Attribution','Economic Attribution','Agentic Attribution']; return hero('Attribution spectrum','A visual maturity model','Attribution can mature from passive visibility to persistent, economic and agentic relationships.',false)+`<div class="spectrum"><div class="spectrum-track">${names.map((m,i)=>`<div class="stage" style="--i:${i}"><span class="number">${i+1}</span><b>${m}</b><p>${['No visible source relationship inside the AI answer.','A link points outward, but context is thin.','Sources become cards, comparisons and follow-up objects.','Publisher identity remains visible across a session.','Contribution creates measurable value and payment signals.','Publisher expertise can act inside user workflows.'][i]}</p></div>`).join('')}</div></div>`; }
+    function reflection(){ return `<section id="reflection" class="reflection" style="margin-top:42px"><p class="eyebrow">Reflection layer</p><h2>Discussion questions</h2><div class="questions">${['What should attribution mean in an AI-native web?','Is visibility enough without economic participation?','Should trust become measurable?','Can subscriptions survive in conversational interfaces?','What is the equivalent of a homepage in an agent ecosystem?'].map(q=>`<div class="question-card">${q}</div>`).join('')}</div></section><div class="footer-strip"><b>A new social contract for the AI web</b><span>Trusted publishers provide intelligence. AI platforms provide reach, attribution and economic participation.</span><span>Trust · Transparency · Value Exchange · Choice</span></div>`; }
+    function render(){ root.innerHTML = nav()+`<div class="page-enter">${view==='home'?home():view==='compare'?compare():view==='spectrum'?spectrum():detail(activeConcept)}</div>`+reflection(); }
+    document.addEventListener('click', e=>{ const v=e.target.closest('[data-view]')?.dataset.view; if(v){view=v; render(); scrollTo({top:0,behavior:'smooth'});} const d=e.target.closest('[data-detail]')?.dataset.detail; if(d){view='detail';activeConcept=+d;render();scrollTo({top:0,behavior:'smooth'});} const s=e.target.closest('[data-select]')?.dataset.select; if(s){const id=+s; selected=selected.includes(id)?selected.filter(x=>x!==id):(selected.length<3?[...selected,id]:[selected[1],selected[2],id]); render();} if(e.target.closest('[data-scroll]')) document.getElementById('reflection')?.scrollIntoView({behavior:'smooth'}); const tip=e.target.closest('[data-tip]')?.dataset.tip; if(tip){ const t=document.getElementById('tip'); t.innerHTML=`<strong>${['Identity marker','Relationship control','Evidence object'][tip]}</strong><p>${concepts[(activeConcept||1)-1].title} uses this interaction to turn attribution into something users can inspect and shape.</p><dl><dt>Why it matters</dt><dd>It connects publisher contribution to user trust at the point of use.</dd><dt>Risk</dt><dd>Without standards, these signals could become inconsistent or gameable.</dd></dl>`; }});
+    render();
+  </script>
+</body>
+</html>
