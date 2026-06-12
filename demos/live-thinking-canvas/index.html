@@ -1,0 +1,475 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Live Thinking Canvas — MVP Prototype</title>
+  <style>
+    :root {
+      --paper: #f7f3eb;
+      --card: #fffdf8;
+      --ink: #1e2723;
+      --muted: #6f766f;
+      --line: #ded7ca;
+      --line-strong: #c8bda8;
+      --sage: #8ba895;
+      --sage-dark: #426450;
+      --clay: #b8795c;
+      --gold: #d9a441;
+      --blue: #6f91a8;
+      --rose: #bb777d;
+      --shadow: 0 24px 70px rgba(45, 38, 27, .10);
+      --radius-lg: 28px;
+      --radius-md: 18px;
+      --radius-sm: 12px;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at 10% 0%, rgba(217, 164, 65, .15), transparent 30%),
+        radial-gradient(circle at 90% 10%, rgba(111, 145, 168, .14), transparent 28%),
+        var(--paper);
+      color: var(--ink);
+    }
+
+    button, input, textarea, select { font: inherit; }
+    button { cursor: pointer; }
+
+    .app-shell { min-height: 100vh; }
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      padding: 22px 34px;
+      border-bottom: 1px solid rgba(222, 215, 202, .72);
+      background: rgba(247, 243, 235, .84);
+      backdrop-filter: blur(18px);
+      position: sticky;
+      top: 0;
+      z-index: 20;
+    }
+
+    .brand { display: flex; align-items: center; gap: 12px; font-weight: 760; letter-spacing: -.02em; }
+    .brand-mark {
+      width: 34px; height: 34px; border-radius: 11px;
+      background: linear-gradient(135deg, var(--sage-dark), var(--sage));
+      display: grid; place-items: center; color: #fffdf8; box-shadow: inset 0 0 0 1px rgba(255,255,255,.32);
+    }
+    .nav-hint { color: var(--muted); font-size: 14px; }
+    .screen { display: none; padding: 46px 34px 64px; }
+    .screen.active { display: block; }
+    .container { max-width: 1180px; margin: 0 auto; }
+    .wide-container { max-width: 1440px; margin: 0 auto; }
+
+    .eyebrow {
+      text-transform: uppercase;
+      letter-spacing: .16em;
+      font-size: 12px;
+      color: var(--sage-dark);
+      font-weight: 750;
+    }
+    h1, h2, h3 { margin: 0; line-height: .98; letter-spacing: -.055em; }
+    h1 { font-family: Georgia, "Times New Roman", serif; font-size: clamp(58px, 8vw, 112px); font-weight: 500; max-width: 920px; }
+    h2 { font-family: Georgia, "Times New Roman", serif; font-size: clamp(40px, 5vw, 70px); font-weight: 500; }
+    h3 { font-size: 22px; letter-spacing: -.035em; }
+    p { line-height: 1.55; color: var(--muted); }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1.08fr .92fr;
+      gap: 42px;
+      align-items: center;
+      padding-top: 34px;
+    }
+    .hero-copy { display: grid; gap: 24px; }
+    .hero-copy .subheadline { max-width: 680px; font-size: 22px; color: #465149; }
+    .cta-row { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+    .btn {
+      border: 1px solid var(--line-strong);
+      background: var(--card);
+      color: var(--ink);
+      border-radius: 999px;
+      padding: 12px 18px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 44px;
+      transition: transform .18s ease, background .18s ease, border-color .18s ease;
+    }
+    .btn:hover { transform: translateY(-1px); border-color: #a9987c; }
+    .btn.primary { background: var(--ink); color: #fffdf8; border-color: var(--ink); box-shadow: 0 14px 34px rgba(30,39,35,.20); }
+    .btn.sage { background: var(--sage-dark); color: #fff; border-color: var(--sage-dark); }
+    .btn.ghost { background: transparent; }
+    .btn.small { padding: 8px 12px; min-height: 34px; font-size: 13px; }
+    .btn.danger { color: #8a3f34; border-color: rgba(184, 121, 92, .45); }
+
+    .benefits { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 20px; }
+    .benefit, .card {
+      background: rgba(255, 253, 248, .78);
+      border: 1px solid rgba(222, 215, 202, .9);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      box-shadow: 0 12px 40px rgba(45, 38, 27, .045);
+    }
+    .benefit .icon { width: 38px; height: 38px; border-radius: 13px; display: grid; place-items: center; background: rgba(139,168,149,.18); margin-bottom: 14px; }
+
+    .preview-card { border-radius: var(--radius-lg); background: rgba(255,253,248,.84); border: 1px solid var(--line); padding: 18px; box-shadow: var(--shadow); }
+    .mini-app { background: #fbf8f1; border: 1px solid var(--line); border-radius: 22px; overflow: hidden; }
+    .mini-header { display: flex; justify-content: space-between; align-items: center; padding: 14px 16px; border-bottom: 1px solid var(--line); }
+    .status-pill { display: inline-flex; align-items: center; gap: 7px; border-radius: 999px; padding: 7px 10px; background: rgba(139,168,149,.16); color: var(--sage-dark); font-size: 12px; font-weight: 720; }
+    .dot { width: 8px; height: 8px; border-radius: 99px; background: var(--sage-dark); box-shadow: 0 0 0 5px rgba(139,168,149,.18); }
+    .mini-body { display: grid; grid-template-columns: .8fr 1.2fr; min-height: 410px; }
+    .mini-stream { border-right: 1px solid var(--line); padding: 16px; display: grid; align-content: start; gap: 12px; }
+    .transcript-line { font-size: 13px; color: #59625b; border-left: 2px solid var(--line-strong); padding-left: 10px; }
+    .mini-canvas { padding: 18px; position: relative; min-height: 360px; }
+    .node { position: absolute; border-radius: 999px; border: 1px solid var(--line-strong); background: #fffdf8; padding: 10px 13px; font-size: 12px; box-shadow: 0 12px 26px rgba(45,38,27,.07); }
+    .node.primary-node { background: rgba(139,168,149,.18); color: var(--sage-dark); font-weight: 760; }
+    .connector { position: absolute; height: 1px; background: var(--line-strong); transform-origin: left center; opacity: .8; }
+
+    .section-head { display: flex; justify-content: space-between; align-items: end; gap: 24px; margin-bottom: 24px; }
+    .setup-grid { display: grid; grid-template-columns: .86fr 1.14fr; gap: 24px; align-items: start; }
+    .field { display: grid; gap: 8px; margin-bottom: 16px; }
+    label { font-size: 13px; color: #4a554d; font-weight: 760; }
+    input, textarea, select {
+      width: 100%;
+      border: 1px solid var(--line-strong);
+      border-radius: 14px;
+      background: rgba(255,253,248,.9);
+      color: var(--ink);
+      padding: 13px 14px;
+      outline: none;
+    }
+    textarea { min-height: 110px; resize: vertical; }
+    .option-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .choice { border: 1px solid var(--line); border-radius: 16px; padding: 14px; background: rgba(255,253,248,.74); min-height: 92px; }
+    .choice.selected { border-color: var(--sage-dark); box-shadow: inset 0 0 0 1px var(--sage-dark); background: rgba(139,168,149,.14); }
+    .choice strong { display: block; margin-bottom: 6px; }
+    .choice span { color: var(--muted); font-size: 13px; line-height: 1.35; }
+
+    .consent-layout { display: grid; grid-template-columns: 1fr .7fr; gap: 24px; }
+    .notice-list { display: grid; gap: 12px; margin: 22px 0; }
+    .notice { display: flex; gap: 12px; align-items: flex-start; padding: 16px; border: 1px solid var(--line); border-radius: 16px; background: rgba(255,253,248,.78); }
+    .notice b { display: block; margin-bottom: 4px; }
+    .notice span { color: var(--muted); font-size: 14px; }
+
+    .live-screen { padding: 22px; }
+    .session-toolbar { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-bottom: 16px; }
+    .live-grid { display: grid; grid-template-columns: 310px minmax(480px, 1fr) 330px; gap: 14px; min-height: calc(100vh - 144px); }
+    .panel { background: rgba(255,253,248,.84); border: 1px solid var(--line); border-radius: 22px; overflow: hidden; box-shadow: 0 16px 48px rgba(45,38,27,.055); }
+    .panel-head { padding: 16px; border-bottom: 1px solid var(--line); display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    .panel-body { padding: 16px; }
+    .stream-items { display: grid; gap: 14px; max-height: 620px; overflow: auto; padding-right: 4px; }
+    .stream-item { border-left: 2px solid var(--line-strong); padding-left: 12px; color: #4f5a52; font-size: 14px; line-height: 1.45; }
+    .stream-item time { display: block; color: var(--muted); font-size: 12px; margin-bottom: 4px; }
+    .pulse-card { background: rgba(139,168,149,.14); border-color: rgba(66,100,80,.3); }
+    .canvas-tabs { display: flex; gap: 8px; flex-wrap: wrap; }
+    .tab { border: 1px solid var(--line); border-radius: 999px; padding: 8px 11px; background: transparent; color: var(--muted); font-size: 13px; }
+    .tab.active { background: var(--ink); border-color: var(--ink); color: #fffdf8; }
+    .canvas-stage { position: relative; min-height: 560px; border-radius: 20px; background: linear-gradient(180deg, rgba(247,243,235,.64), rgba(255,253,248,.48)); border: 1px solid rgba(222,215,202,.8); overflow: hidden; margin-top: 14px; }
+    .map-view { display: none; position: absolute; inset: 0; padding: 20px; }
+    .map-view.active { display: block; }
+    .map-node { position: absolute; border: 1px solid var(--line-strong); background: #fffdf8; border-radius: 20px; padding: 14px; width: 190px; box-shadow: 0 18px 36px rgba(45,38,27,.08); }
+    .map-node h4 { margin: 0 0 8px; letter-spacing: -.02em; }
+    .map-node p { margin: 0; font-size: 12px; }
+    .map-node.selected { border-color: var(--sage-dark); box-shadow: 0 0 0 3px rgba(139,168,149,.18), 0 18px 36px rgba(45,38,27,.08); }
+    .map-line { position: absolute; height: 1px; background: #c8bda8; transform-origin: left center; }
+    .tension-card { display: grid; grid-template-columns: 1fr auto 1fr; gap: 14px; align-items: center; padding: 18px; border: 1px solid var(--line); border-radius: 18px; margin-bottom: 14px; background: rgba(255,253,248,.84); }
+    .versus { width: 42px; height: 42px; border-radius: 999px; display: grid; place-items: center; background: rgba(184,121,92,.14); color: var(--clay); font-weight: 800; }
+    .decision-item, .question-item, .timeline-item { padding: 15px; border: 1px solid var(--line); border-radius: 16px; background: rgba(255,253,248,.82); margin-bottom: 12px; }
+    .ai-stack { display: grid; gap: 12px; }
+    .observation { border: 1px solid var(--line); border-radius: 17px; padding: 14px; background: rgba(255,253,248,.82); }
+    .observation .tag { display: inline-flex; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; font-weight: 800; color: var(--sage-dark); margin-bottom: 8px; }
+    .observation p { margin: 0; font-size: 14px; color: #3e4841; }
+    .action-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+    .drawer { margin-top: 14px; display: none; border: 1px solid rgba(184,121,92,.35); background: rgba(184,121,92,.08); border-radius: 18px; padding: 14px; }
+    .drawer.visible { display: block; }
+    .drawer b { color: #7d4d3e; }
+
+    .output-grid { display: grid; grid-template-columns: 1.1fr .9fr; gap: 18px; }
+    .memo-section { padding: 18px; border-bottom: 1px solid var(--line); }
+    .memo-section:last-child { border-bottom: 0; }
+    .memo-section ul { margin: 10px 0 0; padding-left: 20px; color: #4f5a52; line-height: 1.55; }
+    .solo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+    .solo-input { min-height: 280px; }
+
+    .muted { color: var(--muted); }
+    .fineprint { font-size: 12px; color: var(--muted); }
+    .hidden { display: none !important; }
+
+    @media (max-width: 1120px) {
+      .hero, .setup-grid, .consent-layout, .output-grid, .solo-grid { grid-template-columns: 1fr; }
+      .live-grid { grid-template-columns: 1fr; }
+      .live-screen { padding: 14px; }
+    }
+    @media (max-width: 720px) {
+      .screen { padding: 28px 18px 48px; }
+      .topbar { padding: 16px 18px; }
+      .benefits, .option-grid, .mini-body { grid-template-columns: 1fr; }
+      .session-toolbar { align-items: flex-start; flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="brand"><span class="brand-mark">◌</span> Live Thinking Canvas</div>
+      <div class="nav-hint" id="navHint">Pulse-based AI for live strategy sessions</div>
+    </header>
+
+    <main>
+      <section class="screen active" data-screen="landing">
+        <div class="container hero">
+          <div class="hero-copy">
+            <div class="eyebrow">MVP clickable prototype</div>
+            <h1>Turn live conversations into visual intelligence.</h1>
+            <p class="subheadline">A pulse-based AI canvas that helps teams see themes, tensions, decisions and next questions as they talk.</p>
+            <div class="cta-row">
+              <button class="btn primary" data-go="setup">Start a new session →</button>
+              <button class="btn ghost" data-go="solo">Try solo mode</button>
+            </div>
+            <div class="benefits">
+              <div class="benefit"><div class="icon">▦</div><h3>Structure the conversation</h3><p>Every pulse organizes the latest discussion into themes, questions and decisions.</p></div>
+              <div class="benefit"><div class="icon">◇</div><h3>Challenge the thinking</h3><p>Surface tensions, assumptions and useful counterarguments without taking over.</p></div>
+              <div class="benefit"><div class="icon">↗</div><h3>Turn discussion into output</h3><p>Generate a final memo, decision log, action plan or article outline when the session ends.</p></div>
+            </div>
+          </div>
+          <div class="preview-card">
+            <div class="mini-app">
+              <div class="mini-header"><span class="status-pill"><span class="dot"></span> Listening · next pulse in 04:12</span><button class="btn small">Generate pulse</button></div>
+              <div class="mini-body">
+                <div class="mini-stream">
+                  <div class="transcript-line">“If AI answers the question directly, where does our public value show up?”</div>
+                  <div class="transcript-line">“Attribution has to be a product requirement, not a legal afterthought.”</div>
+                  <div class="transcript-line">“We need to experiment without becoming dependent on platforms.”</div>
+                </div>
+                <div class="mini-canvas">
+                  <div class="connector" style="width:160px; left:185px; top:165px; transform:rotate(21deg)"></div>
+                  <div class="connector" style="width:140px; left:260px; top:225px; transform:rotate(-28deg)"></div>
+                  <div class="connector" style="width:170px; left:190px; top:285px; transform:rotate(-8deg)"></div>
+                  <div class="node primary-node" style="left:48px; top:144px;">Audience relationship</div>
+                  <div class="node" style="left:300px; top:94px;">Attribution in AI answers</div>
+                  <div class="node" style="left:330px; top:220px;">Platform dependency</div>
+                  <div class="node" style="left:125px; top:304px;">Publisher-owned AI</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen" data-screen="setup">
+        <div class="container">
+          <div class="section-head"><div><div class="eyebrow">New session setup</div><h2>Define the pulse before the room starts talking.</h2></div><button class="btn ghost" data-go="landing">← Back</button></div>
+          <div class="setup-grid">
+            <div class="card">
+              <div class="field"><label>Session title</label><input value="Public media strategy: AI interfaces and news content"></div>
+              <div class="field"><label>Session goal</label><textarea>Decide how a public media organization should respond to generative AI interfaces that summarize, recommend and answer questions using news content.</textarea></div>
+              <div class="field"><label>Desired output</label><select><option>Strategy memo</option><option>Decision log</option><option>Brainstorm summary</option><option>Article outline</option><option>Action plan</option></select></div>
+              <button class="btn primary" data-go="consent">Continue to consent →</button>
+            </div>
+            <div class="card">
+              <label>Session type</label>
+              <div class="option-grid" style="margin:10px 0 22px;">
+                <button class="choice"><strong>Brainstorm</strong><span>Cluster ideas and suggest unexplored angles.</span></button>
+                <button class="choice selected"><strong>Strategy</strong><span>Capture goals, assumptions, risks, dependencies, tensions and decisions.</span></button>
+                <button class="choice"><strong>Editorial / research</strong><span>Identify angles, missing perspectives and evidence gaps.</span></button>
+                <button class="choice"><strong>Solo</strong><span>Speak or type thoughts and receive structured feedback.</span></button>
+              </div>
+              <label>AI pulse frequency</label>
+              <div class="option-grid" style="margin:10px 0 22px;">
+                <button class="choice"><strong>Manual only</strong><span>The AI only intervenes when asked.</span></button>
+                <button class="choice"><strong>Every 3 minutes</strong><span>Useful for fast brainstorms.</span></button>
+                <button class="choice selected"><strong>Every 5 minutes</strong><span>Recommended balance for strategy sessions.</span></button>
+                <button class="choice"><strong>Every 10 minutes</strong><span>Quietest mode for sensitive discussions.</span></button>
+              </div>
+              <label>Privacy setting</label>
+              <div class="option-grid" style="margin-top:10px;">
+                <button class="choice"><strong>Store transcript</strong><span>Best recall, most data retained.</span></button>
+                <button class="choice selected"><strong>Store summary only</strong><span>Keep structured outputs, not raw transcript.</span></button>
+                <button class="choice"><strong>Delete audio after transcription</strong><span>Audio is discarded after speech-to-text.</span></button>
+                <button class="choice"><strong>Private review</strong><span>Require host approval before export.</span></button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen" data-screen="consent">
+        <div class="container consent-layout">
+          <div>
+            <div class="eyebrow">Consent and listening</div>
+            <h2>The canvas should be invited into the conversation.</h2>
+            <p>The MVP makes AI activity visible and controllable. It listens for transcription, then analyses only at selected pulses or when the host manually asks for a pulse.</p>
+            <div class="notice-list">
+              <div class="notice"><span>●</span><div><b>Listening status is visible</b><span>Participants can see whether the app is listening, paused or analysing.</span></div></div>
+              <div class="notice"><span>●</span><div><b>Consent reminder</b><span>Tell everyone that audio is being transcribed and analysed in pulses.</span></div></div>
+              <div class="notice"><span>●</span><div><b>Storage setting</b><span>Current setting: store summary only; delete audio after transcription.</span></div></div>
+              <div class="notice"><span>●</span><div><b>Host control</b><span>Pause listening or end the session at any time.</span></div></div>
+            </div>
+            <div class="cta-row"><button class="btn primary" data-go="live">Start live session →</button><button class="btn ghost" data-go="setup">Edit setup</button></div>
+          </div>
+          <div class="card">
+            <span class="status-pill"><span class="dot"></span> Ready to listen</span>
+            <h3 style="margin-top:22px;">Session configuration</h3>
+            <p><b>Type:</b> Strategy conversation<br><b>Pulse:</b> Every 5 minutes + manual<br><b>Output:</b> Strategy memo<br><b>Privacy:</b> Store summary only</p>
+            <p class="fineprint">Buildable assumption: browser audio capture → streaming speech-to-text → transcript chunks → structured LLM JSON → visual canvas updates.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen live-screen" data-screen="live">
+        <div class="wide-container">
+          <div class="session-toolbar">
+            <div><div class="eyebrow">Live strategy session</div><h3>Public media strategy: AI interfaces and news content</h3></div>
+            <div class="cta-row"><span class="status-pill" id="liveStatus"><span class="dot"></span> Listening · next pulse in <span id="timer">04:58</span></span><button class="btn" id="pauseBtn">Pause listening</button><button class="btn primary" id="pulseBtn">Generate pulse</button><button class="btn danger" data-go="output">End session</button></div>
+          </div>
+          <div class="live-grid">
+            <aside class="panel">
+              <div class="panel-head"><b>Conversation stream</b><button class="btn small" id="bookmarkBtn">Bookmark</button></div>
+              <div class="panel-body stream-items" id="streamItems">
+                <div class="stream-item"><time>00:42 · Host</time>We need a response that protects our relationship with audiences but does not make us invisible in AI interfaces.</div>
+                <div class="stream-item"><time>01:18 · Product</time>The threat is not just scraping. It is that people may get answers without ever seeing the source.</div>
+                <div class="stream-item"><time>02:03 · Editorial</time>Attribution should be a strategic requirement. Trust has to travel with the content.</div>
+                <div class="stream-item"><time>03:21 · Partnerships</time>We also cannot ignore reach. If people discover information through assistants, we need a presence there.</div>
+              </div>
+            </aside>
+
+            <section class="panel">
+              <div class="panel-head"><b>Thinking canvas</b><div class="canvas-tabs"><button class="tab active" data-view="theme">Theme map</button><button class="tab" data-view="tension">Tension map</button><button class="tab" data-view="decision">Decision log</button><button class="tab" data-view="questions">Open questions</button><button class="tab" data-view="timeline">Timeline</button></div></div>
+              <div class="panel-body">
+                <div class="canvas-stage">
+                  <div class="map-view active" id="themeView">
+                    <div class="map-line" style="width:260px; left:240px; top:180px; transform:rotate(12deg)"></div>
+                    <div class="map-line" style="width:250px; left:300px; top:290px; transform:rotate(-20deg)"></div>
+                    <div class="map-line" style="width:220px; left:225px; top:365px; transform:rotate(-7deg)"></div>
+                    <div class="map-node selected" style="left:32px; top:92px"><h4>Loss of direct audience relationship</h4><p>Repeated concern about answers replacing visits.</p><div class="action-row"><button class="btn small" id="challengeBtn">Challenge this</button><button class="btn small" id="markDecisionBtn">Mark as decision</button></div></div>
+                    <div class="map-node" style="left:380px; top:58px"><h4>Attribution and visibility</h4><p>Trust and public value need to travel with summaries.</p></div>
+                    <div class="map-node" style="left:575px; top:224px"><h4>Platform dependency</h4><p>Partnerships may increase reach but reduce leverage.</p></div>
+                    <div class="map-node" style="left:92px; top:342px"><h4>Publisher-owned AI experiences</h4><p>Internal product innovation as a strategic hedge.</p></div>
+                    <div class="map-node" style="left:390px; top:398px"><h4>Data access and licensing</h4><p>Need clear rules for use, value exchange and measurement.</p></div>
+                  </div>
+                  <div class="map-view" id="tensionView">
+                    <div class="tension-card"><div><b>Open access</b><p>Public mission depends on broad availability.</p></div><div class="versus">vs</div><div><b>Content protection</b><p>Unlicensed reuse may weaken sustainability.</p></div></div>
+                    <div class="tension-card"><div><b>Collaborate with AI platforms</b><p>Meet audiences where discovery is moving.</p></div><div class="versus">vs</div><div><b>Avoid strategic dependency</b><p>Do not outsource the audience relationship.</p></div></div>
+                    <div class="tension-card"><div><b>Innovation speed</b><p>Prototype conversational news quickly.</p></div><div class="versus">vs</div><div><b>Editorial safeguards</b><p>Maintain accountability, provenance and accuracy.</p></div></div>
+                    <div class="drawer visible"><b>Challenge generated:</b> Are we assuming direct traffic is the only meaningful relationship? Users may value public media more if its information appears reliably inside the tools they already use.</div>
+                  </div>
+                  <div class="map-view" id="decisionView">
+                    <div class="decision-item"><b>Decision detected · needs confirmation</b><p>Attribution is a strategic requirement for any AI distribution or licensing path.</p></div>
+                    <div class="decision-item hidden" id="manualDecision"><b>Marked by host</b><p>Protecting the audience relationship will be treated as a decision criterion for platform partnerships.</p></div>
+                  </div>
+                  <div class="map-view" id="questionsView">
+                    <div class="question-item"><b>What should remain uniquely owned by the public media organization?</b><p>Suggested next question for the room.</p></div>
+                    <div class="question-item"><b>What user benefit of AI summaries are we not acknowledging yet?</b><p>Possible blind spot.</p></div>
+                  </div>
+                  <div class="map-view" id="timelineView">
+                    <div class="timeline-item"><b>00:00–02:00 · Framing</b><p>Risk framed as loss of audience relationship and attribution.</p></div>
+                    <div class="timeline-item"><b>02:00–05:00 · First pulse</b><p>AI clustered five themes and detected three trade-offs.</p></div>
+                    <div class="timeline-item"><b>05:00+ · Decision shaping</b><p>Attribution and owned experiences are becoming decision criteria.</p></div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <aside class="panel">
+              <div class="panel-head"><b>AI perspective</b><span class="fineprint">Pulse 1</span></div>
+              <div class="panel-body ai-stack">
+                <div class="observation"><span class="tag">Emerging theme</span><p>This theme has appeared several times: loss of direct audience relationship.</p></div>
+                <div class="observation"><span class="tag">Possible tension</span><p>Reach through third-party AI platforms is in tension with control over the user relationship.</p></div>
+                <div class="observation"><span class="tag">Unspoken assumption</span><p>The group is assuming attribution in AI interfaces can be made legible to users.</p></div>
+                <div class="observation"><span class="tag">Useful counterargument</span><p>Blocking AI crawlers may protect content but reduce discoverability.</p></div>
+                <div class="observation"><span class="tag">Question to ask next</span><p>What should remain uniquely owned by the public media organization?</p></div>
+                <div class="observation"><span class="tag">Source to investigate</span><p>Review licensing precedents and user research on attribution in answer engines.</p></div>
+                <div class="drawer" id="challengeDrawer"><b>Challenge this:</b> Reframe the problem around user trust, not traffic. If summaries are useful, the organization may need to become the most trusted source inside conversational interfaces.</div>
+              </div>
+            </aside>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen" data-screen="output">
+        <div class="container">
+          <div class="section-head"><div><div class="eyebrow">Final output</div><h2>Generate a strategy memo from the session.</h2></div><div class="cta-row"><button class="btn ghost" data-go="live">Return to session</button><button class="btn primary">Export memo</button></div></div>
+          <div class="output-grid">
+            <div class="panel">
+              <div class="panel-head"><b>Strategy memo draft</b><span class="status-pill">Generated from pulses</span></div>
+              <div class="memo-section"><h3>Executive summary</h3><p>The group converged on a strategy that treats AI interfaces as both a distribution opportunity and a structural risk. The organization should require visible attribution, protect the audience relationship and prototype publisher-owned conversational news experiences.</p></div>
+              <div class="memo-section"><h3>Main themes</h3><ul><li>Loss of direct audience relationship</li><li>Attribution and visibility in AI interfaces</li><li>Dependency on big tech platforms</li><li>Need for publisher-owned AI experiences</li><li>Public value and trustworthy information</li></ul></div>
+              <div class="memo-section"><h3>Key tensions</h3><ul><li>Open access versus content protection</li><li>Collaboration with AI platforms versus strategic dependency</li><li>Innovation speed versus editorial safeguards</li></ul></div>
+            </div>
+            <div class="panel">
+              <div class="memo-section"><h3>Decisions made</h3><ul><li>Attribution is a strategic requirement for AI distribution.</li><li>Protecting the audience relationship is a criterion for platform partnerships.</li></ul></div>
+              <div class="memo-section"><h3>Open questions</h3><ul><li>What should remain uniquely owned?</li><li>How should user benefit from summaries be measured?</li><li>What licensing model preserves public value?</li></ul></div>
+              <div class="memo-section"><h3>Suggested next steps</h3><ul><li>Define attribution requirements for AI partners.</li><li>Run a two-week prototype of a publisher-owned conversational news experience.</li><li>Map licensing and crawler policy options.</li></ul></div>
+              <div class="memo-section"><h3>Export options</h3><div class="cta-row"><button class="btn small">Copy memo</button><button class="btn small">Download PDF</button><button class="btn small">Send to docs</button></div></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen" data-screen="solo">
+        <div class="container">
+          <div class="section-head"><div><div class="eyebrow">Solo thinking mode</div><h2>Think out loud, then ask for structure.</h2></div><button class="btn ghost" data-go="landing">← Landing</button></div>
+          <div class="solo-grid">
+            <div class="card"><label>Your spoken or typed thoughts</label><textarea class="solo-input">I am trying to decide whether our newsroom should partner with AI platforms or build our own conversational product. I worry about discoverability, attribution, public value and losing the direct relationship with audiences.</textarea><div class="cta-row"><button class="btn primary">Generate solo pulse</button><button class="btn">Start microphone</button></div></div>
+            <div class="panel"><div class="panel-head"><b>Structured feedback</b></div><div class="panel-body ai-stack"><div class="observation"><span class="tag">Themes</span><p>Audience relationship, attribution, platform dependency, product innovation.</p></div><div class="observation"><span class="tag">Counterargument</span><p>Partnering may increase public impact if safeguards make provenance visible.</p></div><div class="observation"><span class="tag">Questions</span><p>What evidence would prove that owned experiences are worth the investment?</p></div><div class="observation"><span class="tag">Next steps</span><p>Create a decision matrix for reach, trust, control, cost and editorial risk.</p></div></div></div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const screens = [...document.querySelectorAll('.screen')];
+    const navHint = document.getElementById('navHint');
+    const labels = { landing: 'Pulse-based AI for live strategy sessions', setup: 'Step 1 of 4 · setup', consent: 'Step 2 of 4 · consent', live: 'Step 3 of 4 · live canvas', output: 'Step 4 of 4 · memo output', solo: 'Solo mode prototype' };
+    function go(screen) {
+      screens.forEach(s => s.classList.toggle('active', s.dataset.screen === screen));
+      navHint.textContent = labels[screen] || '';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    document.querySelectorAll('[data-go]').forEach(button => button.addEventListener('click', () => go(button.dataset.go)));
+
+    document.querySelectorAll('.choice').forEach(choice => choice.addEventListener('click', () => {
+      const group = choice.parentElement;
+      group.querySelectorAll('.choice').forEach(c => c.classList.remove('selected'));
+      choice.classList.add('selected');
+    }));
+
+    const viewMap = { theme: 'themeView', tension: 'tensionView', decision: 'decisionView', questions: 'questionsView', timeline: 'timelineView' };
+    document.querySelectorAll('[data-view]').forEach(tab => tab.addEventListener('click', () => {
+      document.querySelectorAll('[data-view]').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      document.querySelectorAll('.map-view').forEach(view => view.classList.remove('active'));
+      document.getElementById(viewMap[tab.dataset.view]).classList.add('active');
+    }));
+
+    document.getElementById('pulseBtn').addEventListener('click', () => {
+      document.getElementById('liveStatus').innerHTML = '<span class="dot"></span> Analysing · pulse generated';
+      document.getElementById('streamItems').insertAdjacentHTML('beforeend', '<div class="stream-item pulse-card"><time>05:00 · AI pulse</time>Generated 5 themes, 3 tensions, 2 assumptions, 2 open questions and 1 suggested next question.</div>');
+      setTimeout(() => document.getElementById('liveStatus').innerHTML = '<span class="dot"></span> Listening · next pulse in <span id="timer">05:00</span>', 1300);
+    });
+    document.getElementById('pauseBtn').addEventListener('click', (event) => {
+      const paused = event.currentTarget.textContent.includes('Resume');
+      event.currentTarget.textContent = paused ? 'Pause listening' : 'Resume listening';
+      document.getElementById('liveStatus').innerHTML = paused ? '<span class="dot"></span> Listening · next pulse in <span id="timer">04:58</span>' : '<span class="dot"></span> Paused · no analysis running';
+    });
+    document.getElementById('bookmarkBtn').addEventListener('click', () => {
+      document.getElementById('streamItems').insertAdjacentHTML('beforeend', '<div class="stream-item"><time>Bookmark · host</time>Marked moment: attribution as a strategic requirement.</div>');
+    });
+    document.getElementById('challengeBtn').addEventListener('click', () => {
+      document.getElementById('challengeDrawer').classList.add('visible');
+    });
+    document.getElementById('markDecisionBtn').addEventListener('click', () => {
+      document.getElementById('manualDecision').classList.remove('hidden');
+      document.querySelector('[data-view="decision"]').click();
+    });
+  </script>
+</body>
+</html>
